@@ -1,1 +1,1 @@
-# league-stats
+League Stats

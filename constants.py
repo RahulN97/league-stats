@@ -1,6 +1,8 @@
+import os
+
 # Constants
+API_KEY = os.environ.get('API_KEY')
 ROOT_SUMMONER = 'Rahbiar'
-API_KEY = 'RGAPI-a8c4d8c0-0c11-432d-a816-0aeced8812f9'
 
 # Strategies
 STRATEGIES = {

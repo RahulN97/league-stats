@@ -8,6 +8,7 @@ from constants import (
 )
 from copy import deepcopy
 from enum import Enum
+from request_engine import RequestEngine
 from threading import Lock
 
 
@@ -33,28 +34,14 @@ class ResourceManager:
         self.statuses = {}
         self.root_summoner = args.user if args else ROOT_SUMMONER
         self.size = args.size if args else 100
-
-
-    def _format_url(self, url, **kwargs):
-        return url.format(API_KEY=API_KEY, **kwargs)
-
-
-    def _make_request(self, url):
-        try:
-            resp = requests.get(url)
-            resp_data = json.loads(resp.text)
-        except requests.exceptions.RequestException as e:
-            raise SystemExit(f'Data fetching failed with error:\n{e}')
-        except json.decoder.JSONDecodeError as e:
-            raise SystemExit(f'Failed to decode resp data: {resp.text} with error:\n{e}')
-        return resp_data, resp.status_code
+        self.request_engine = RequestEngine()
 
 
     def _init_champion_cache(self) -> FetchStatus:
         if RESOURCES['champion_cache']:
             return FetchStatus.NONE
 
-        resp_data, status = self._make_request(URLS['champions'])
+        resp_data, status = self.request_engine.get(URLS['champions'])
 
         RESOURCES['champion_cache'] = {}
         for champion,data in resp_data['data'].items():
@@ -67,24 +54,25 @@ class ResourceManager:
         if RESOURCES['match_history']:
             return FetchStatus.NONE
 
-        summ_url = self._format_url(URLS['summoner_dto'], summoner=self.root_summoner)
-        summ_resp, _ = self._make_request(summ_url)
+        summ_resp, _ = self.request_engine.get(
+            URLS['summoner_dto'], summoner=self.root_summoner
+        )
 
         RESOURCES['match_history'] = []
         resp_statuses = []
         for i in range(0, self.size, 100):
             begin_index = i
             end_index = min(i+100, self.size)
-            match_url = self._format_url(
+
+            match_resp, status = self.request_engine.get(
                 URLS['match_history'],
                 acct_id=summ_resp['accountId'],
                 begin_index=begin_index,
                 end_index=end_index
             )
-            match_resp, status = self._make_request(match_url)
-
             RESOURCES['match_history'].extend(match_resp['matches'])
             resp_statuses.append(status)
+
         return FetchStatus.SUCCESS if all(s == 200 for s in resp_statuses) else FetchStatus.FAIL
 
 

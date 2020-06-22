@@ -1,5 +1,6 @@
 import json
 import requests
+import time
 
 from constants import API_KEY
 from typing import (
@@ -13,13 +14,14 @@ class RequestEngine:
         self.api_key = API_KEY
 
 
-    def retry_requests(func, max_retries=3):
+    def retry_requests(func, max_retries=3, wait=5):
         def retry_decorator(self, *args, **kwargs):
             for _ in range(max_retries):
                 try:
                     return func(self, *args, **kwargs)
                 except Exception as e:
                     exception = e
+                    time.sleep(wait)
             raise exception
         return retry_decorator
 

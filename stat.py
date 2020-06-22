@@ -80,7 +80,7 @@ def produce_args():
 
 def produce_strategy(args, strat):
     if strat == 'championcombo':
-        return ChampionCombo(args.user)
+        return ChampionCombo(args.user, args.size)
     raise Exception(f'Invalid strategy name: {strat}')
 
 

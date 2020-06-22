@@ -1,7 +1,7 @@
 from constants import URLS
-from utils.match_history_utils import MatchHistoryUtils
 from modules.strategy import Strategy
 from resource_manager import RESOURCES
+from utils.match_history_utils import MatchHistoryUtils
 
 
 class ChampionCombo(Strategy):
@@ -13,5 +13,4 @@ class ChampionCombo(Strategy):
 
     def execute(self):
         # result2 = f'{self.acct_id}\n{RESOURCES["champion_cache"]["141"]}\n\n{len(RESOURCES["match_history"])}'
-        # result = self.history_utils.get_participant_id_from_match()
         self.write(type(self).__name__, '')

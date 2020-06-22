@@ -1,23 +1,17 @@
-from resource_manager import RESOURCES
 from . import check_resource
+from resource_manager import RESOURCES
 
 
 class MatchHistoryUtils:
-    def __init__(self, summoner=None, account_id=None, match_id=None):
+    def __init__(self, summoner=None):
         self.summoner = summoner
-        self.account_id = account_id
 
 
     @check_resource(resource='match_history')
-    def get_participant_id_from_match(self):
+    def get_match_result(self, match_id):
         return ''
 
 
     @check_resource(resource='match_history')
-    def get_team_id_from_participant(self):
-        return ''
-
-
-    @check_resource(resource='match_history')
-    def get_result_from_team(self):
+    def get_ally_summoner_names(self, match_id):
         return ''
